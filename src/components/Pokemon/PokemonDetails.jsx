@@ -1,6 +1,7 @@
 import React from "react";
 
-export default function PokemonDetails({pokemonDetails}) {
+export default function PokemonDetails({ pokemonDetails }) {
+  if (!pokemonDetails) return null;
   return (
     <div className="mt-6 p-4 border rounded">
       <h2 className="text-xl font-semibold capitalize">
