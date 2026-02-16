@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useEffect } from "react";
 import PokemonList from "../components/Pokemon/PokemonList";
 import PokemonDetails from "../components/Pokemon/PokemonDetails";
+import SearchBar from "../components/Filters/SearchBar";
+import GenerationFilter from "../components/Filters/GenerationFilter";
 
 export default function PokemonPage() {
   const [pokemon, setPokemon] = useState([]);
@@ -14,6 +16,8 @@ export default function PokemonPage() {
   const [fetchMore, setFetchMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const [view, setView] = useState("list");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGeneration, setSelectedGeneration] = useState("");
 
   useEffect(() => {
     async function fetchPokemon() {
@@ -57,10 +61,22 @@ export default function PokemonPage() {
     console.log(pokemon);
   }
 
+  const filteredPokemon = pokemon.filter((poke) =>
+    poke.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   return (
     <div className="flex-1 bg-gray-100 shadow-lg p-8 overflow-y-auto min-h-0">
       <div className="flex-1 bg-white shadow-lg p-8 overflow-y-auto min-h-0 border border-gray-100">
-        <h2 className="text-xl font-bold">Current View: {view}</h2>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex gap-4">
+            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <GenerationFilter
+              selectedGeneration={selectedGeneration}
+              setSelectedGeneration={setSelectedGeneration}
+            />
+          </div>
+        </div>
         {view === "list" && (
           <>
             <PokemonList pokemon={pokemon} fetchDetails={fetchDetails} />
