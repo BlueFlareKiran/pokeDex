@@ -1,91 +1,137 @@
-/* eslint-disable no-unused-vars */
-import { useState } from "react";
-import { useEffect } from "react";
+// /* eslint-disable no-unused-vars */
+import { useState, useEffect } from "react";
 import PokemonList from "../components/Pokemon/PokemonList";
 import PokemonDetails from "../components/Pokemon/PokemonDetails";
 import SearchBar from "../components/Filters/SearchBar";
 import GenerationFilter from "../components/Filters/GenerationFilter";
 
 export default function PokemonPage() {
-  const [pokemon, setPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pokeError, setPokeError] = useState(null);
   const [pokemonDetails, setPokemonDetails] = useState(null);
-  const [detailsloading, setDetailsLoading] = useState(false);
-  const [fetchMore, setFetchMore] = useState(false);
-  const [offset, setOffset] = useState(0);
   const [view, setView] = useState("list");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGeneration, setSelectedGeneration] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [fullList, setFullList] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(20);
+
+  let filteredList = fullList;
+
+  if (selectedGeneration !== "") {
+    filteredList = fullList.filter((poke) => {
+      return poke.generation === selectedGeneration;
+    });
+  }
+
+  const visiblePokemon = filteredList.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [selectedGeneration]);
 
   useEffect(() => {
     async function fetchPokemon() {
       try {
-        if (offset === 0) {
-          setLoading(true);
-        } else {
-          setFetchMore(true);
-        }
+        setLoading(true);
 
-        const res = await fetch(
-          `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${offset}`,
-        );
+        const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1000");
         const data = await res.json();
+
         const detailedPokemon = await Promise.all(
           data.results.map(async (poke) => {
             const res = await fetch(poke.url);
-            return await res.json();
+            const pokemonData = await res.json();
+
+            const speciesRes = await fetch(pokemonData.species.url);
+            const speciesData = await speciesRes.json();
+
+            return {
+              ...pokemonData,
+              generation: speciesData.generation.name,
+            };
           }),
         );
 
-        setPokemon((prev) => [...prev, ...detailedPokemon]);
+        setFullList(detailedPokemon);
       } catch (err) {
         console.error(err);
         setError("Something went Wrong");
       } finally {
-        if (offset === 0) {
-          setLoading(false);
-        } else {
-          setFetchMore(false);
-        }
+        setLoading(false);
       }
     }
 
     fetchPokemon();
-  }, [offset]);
+  }, []);
 
-  async function fetchDetails(poke) {
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setSuggestions([]);
+      return;
+    }
+
+    const filtered = fullList.filter((poke) =>
+      poke.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+
+    setSuggestions(filtered.slice(0, 5));
+  }, [searchTerm, fullList]);
+
+  function fetchDetails(poke) {
     setPokemonDetails(poke);
     setView("details");
-    console.log(pokemon);
   }
 
-  const filteredPokemon = pokemon.filter((poke) =>
-    poke.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  function handleSuggestionClick(poke) {
+    setPokemonDetails(poke);
+    setView("details");
+    setSearchTerm("");
+    setSuggestions([]);
+  }
+
+  console.log(fullList);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="flex-1 bg-gray-100 shadow-lg p-8 overflow-y-auto min-h-0">
       <div className="flex-1 bg-white shadow-lg p-8 overflow-y-auto min-h-0 border border-gray-100">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-4">
+          <div className="flex gap-4 relative">
             <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+            {suggestions.length > 0 && (
+              <div className="absolute top-full left-0 w-full bg-white border rounded shadow z-10">
+                {suggestions.map((poke) => (
+                  <div
+                    key={poke.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize"
+                    onClick={() => handleSuggestionClick(poke)}
+                  >
+                    {poke.name}
+                  </div>
+                ))}
+              </div>
+            )}
+
             <GenerationFilter
               selectedGeneration={selectedGeneration}
               setSelectedGeneration={setSelectedGeneration}
             />
           </div>
         </div>
+
         {view === "list" && (
           <>
-            <PokemonList pokemon={pokemon} fetchDetails={fetchDetails} />
+            <PokemonList pokemon={visiblePokemon} fetchDetails={fetchDetails} />
+
             <button
-              disabled={fetchMore}
               className="mt-4 px-4 py-2 bg-purple-600 text-white rounded"
-              onClick={() => setOffset((prev) => prev + 10)}
+              onClick={() => setVisibleCount((prev) => prev + 20)}
             >
-              {fetchMore ? "Loading..." : "Load More"}
+              Load More
             </button>
           </>
         )}
@@ -93,11 +139,12 @@ export default function PokemonPage() {
         {view === "details" && (
           <>
             <button
-              className="px-3 py-1 bg-purple-600  text-white rounded"
+              className="px-3 py-1 bg-purple-600 text-white rounded"
               onClick={() => setView("list")}
             >
               ← Back
             </button>
+
             <PokemonDetails pokemonDetails={pokemonDetails} />
           </>
         )}
