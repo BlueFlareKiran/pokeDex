@@ -4,6 +4,7 @@ import PokemonList from "../components/Pokemon/PokemonList";
 import PokemonDetails from "../components/Pokemon/PokemonDetails";
 import SearchBar from "../components/Filters/SearchBar";
 import GenerationFilter from "../components/Filters/GenerationFilter";
+import TypeFilter from "../components/Filters/TypeFilter";
 
 export default function PokemonPage() {
   const [loading, setLoading] = useState(true);
@@ -15,12 +16,19 @@ export default function PokemonPage() {
   const [suggestions, setSuggestions] = useState([]);
   const [fullList, setFullList] = useState([]);
   const [visibleCount, setVisibleCount] = useState(20);
+  const [selectedType, setSelectedType] = useState("");
 
   let filteredList = fullList;
 
   if (selectedGeneration !== "") {
-    filteredList = fullList.filter((poke) => {
+    filteredList = filteredList.filter((poke) => {
       return poke.generation === selectedGeneration;
+    });
+  }
+
+  if (selectedType !== "") {
+    filteredList = filteredList.filter((poke) => {
+      return poke.types.some((t) => t.type.name === selectedType);
     });
   }
 
@@ -29,6 +37,10 @@ export default function PokemonPage() {
   useEffect(() => {
     setVisibleCount(20);
   }, [selectedGeneration]);
+
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [selectedType]);
 
   useEffect(() => {
     async function fetchPokemon() {
@@ -92,9 +104,13 @@ export default function PokemonPage() {
 
   console.log(fullList);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-
+if (loading)
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+  
   return (
     <div className="flex-1 bg-gray-100 shadow-lg p-8 overflow-y-auto min-h-0">
       <div className="flex-1 bg-white shadow-lg p-8 overflow-y-auto min-h-0 border border-gray-100">
@@ -120,6 +136,7 @@ export default function PokemonPage() {
               selectedGeneration={selectedGeneration}
               setSelectedGeneration={setSelectedGeneration}
             />
+            <TypeFilter selectedType={selectedType} setSelectedType={setSelectedType} />
           </div>
         </div>
 
