@@ -7,7 +7,7 @@ export default function TypeFilter({
       <select
         value={selectedType}
         onChange={(e) => setSelectedType(e.target.value)}
-        className="px-3 py-2 border rounded"
+        className="px-4 py-2 w-48 border border-gray-300 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
       >
         <option value="">All Types</option>
         <option value="normal">Normal</option>
