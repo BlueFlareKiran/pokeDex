@@ -1,11 +1,11 @@
 // /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import PokemonList from "../components/Pokemon/PokemonList";
-import PokemonDetails from "../components/Pokemon/PokemonDetails";
 import SearchBar from "../components/Filters/SearchBar";
 import GenerationFilter from "../components/Filters/GenerationFilter";
 import TypeFilter from "../components/Filters/TypeFilter";
 import { useRef } from "react";
+import PokemonDetails from "../components/Pokemon/PokemonDetails/PokemonDetails";
 
 export default function PokemonPage() {
   const [loading, setLoading] = useState(true);
@@ -197,7 +197,7 @@ export default function PokemonPage() {
               className="px-3 py-1 bg-purple-600 text-white rounded"
               onClick={() => setView("list")}
             >
-              ← Back
+              Back
             </button>
 
             <PokemonDetails pokemonDetails={pokemonDetails} />
