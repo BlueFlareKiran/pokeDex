@@ -140,7 +140,7 @@ export default function PokemonPage() {
     );
 
   return (
-    <div className="flex-1 bg-gray-100 shadow-lg p-8 overflow-y-auto min-h-0">
+    <div className="flex-1 bg-[#f4f7fB] shadow-lg p-8 overflow-y-auto min-h-0">
       <div className="flex-1 bg-white shadow-lg p-8 overflow-y-auto min-h-0 border border-gray-100">
           <div className="flex justify-between items-center mb-8">
             {/* LEFT SIDE */}
@@ -194,7 +194,7 @@ export default function PokemonPage() {
         {view === "details" && (
           <>
             <button
-              className="px-3 py-1 bg-purple-600 text-white rounded"
+              className="px-3 py-1 bg-purple-600 text-white rounded mb-3"
               onClick={() => setView("list")}
             >
               Back

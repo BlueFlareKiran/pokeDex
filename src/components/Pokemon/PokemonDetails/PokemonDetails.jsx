@@ -14,7 +14,7 @@ export default function PokemonDetails({ pokemonDetails }) {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6 p-6 border border-gray-700 rounded">
 
       {/* Profile Section */}
       <PokemonProfileCard pokemonDetails={pokemonDetails} />
@@ -29,7 +29,7 @@ export default function PokemonDetails({ pokemonDetails }) {
       <PokemonTypeDefenses pokemonDetails={pokemonDetails} />
 
       {/* Forms */}
-      <PokemonForms pokemonDetails={pokemonDetails} />
+      <PokemonForms pokemonDetails={pokemonDetails} /> 
 
       {/* Moves */}
       <PokemonMovesList pokemonDetails={pokemonDetails} />
