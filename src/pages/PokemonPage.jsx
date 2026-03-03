@@ -6,12 +6,12 @@ import GenerationFilter from "../components/Filters/GenerationFilter";
 import TypeFilter from "../components/Filters/TypeFilter";
 import { useRef } from "react";
 import PokemonDetails from "../components/Pokemon/PokemonDetails/PokemonDetails";
+import { useNavigate } from "react-router-dom";
+import PokemonFilterBar from "../components/Pokemon/PokemonFilterBar";
 
 export default function PokemonPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pokemonDetails, setPokemonDetails] = useState(null);
-  const [view, setView] = useState("list");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGeneration, setSelectedGeneration] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -21,6 +21,13 @@ export default function PokemonPage() {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   let filteredList = fullList;
+  const navigate = useNavigate();
+
+  function handleSuggestionClick(poke) {
+    navigate(`/pokemon/${poke.name}`);
+    setSearchTerm("");
+    setSuggestions([]);
+  }
 
   if (selectedGeneration !== "") {
     filteredList = filteredList.filter((poke) => {
@@ -118,18 +125,6 @@ export default function PokemonPage() {
     setSuggestions(filtered.slice(0, 5));
   }, [searchTerm, fullList]);
 
-  function fetchDetails(poke) {
-    setPokemonDetails(poke);
-    setView("details");
-  }
-
-  function handleSuggestionClick(poke) {
-    setPokemonDetails(poke);
-    setView("details");
-    setSearchTerm("");
-    setSuggestions([]);
-  }
-
   console.log(fullList);
 
   if (loading)
@@ -142,67 +137,23 @@ export default function PokemonPage() {
   return (
     <div className="flex-1 bg-[#f4f7fB] shadow-lg p-8 overflow-y-auto min-h-0">
       <div className="flex-1 bg-white shadow-lg p-8 overflow-y-auto min-h-0 border border-gray-100">
-          <div className="flex justify-between items-center mb-8">
-            {/* LEFT SIDE */}
-            <div className="relative">
-              <SearchBar
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-              />
+        <PokemonFilterBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedGeneration={selectedGeneration}
+          setSelectedGeneration={setSelectedGeneration}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          suggestions={suggestions}
+          handleSuggestionClick={handleSuggestionClick}
+        />
 
-              {suggestions.length > 0 && (
-                <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-md shadow-md z-10">
-                  {suggestions.map((poke) => (
-                    <div
-                      key={poke.id}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize"
-                      onClick={() => handleSuggestionClick(poke)}
-                    >
-                      {poke.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* RIGHT SIDE */}
-            <div className="flex gap-3">
-              <GenerationFilter
-                selectedGeneration={selectedGeneration}
-                setSelectedGeneration={setSelectedGeneration}
-              />
-              <TypeFilter
-                selectedType={selectedType}
-                setSelectedType={setSelectedType}
-              />
-            </div>
-          </div>
-  
-
-        {view === "list" && (
-          <>
-            <PokemonList pokemon={visiblePokemon} fetchDetails={fetchDetails} />
-
-            <div ref={loadMoreRef} className="flex justify-center py-6">
-              {isFetchingMore && (
-                <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-              )}
-            </div>
-          </>
-        )}
-
-        {view === "details" && (
-          <>
-            <button
-              className="px-3 py-1 bg-purple-600 text-white rounded mb-3"
-              onClick={() => setView("list")}
-            >
-              Back
-            </button>
-
-            <PokemonDetails pokemonDetails={pokemonDetails} />
-          </>
-        )}
+        <PokemonList pokemon={visiblePokemon} />
+        <div ref={loadMoreRef} className="flex justify-center py-6">
+          {isFetchingMore && (
+            <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+          )}
+        </div>
       </div>
     </div>
   );

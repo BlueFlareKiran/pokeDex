@@ -1,10 +1,12 @@
 import { SquarePlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function PokemonCard({ pokemon,onSelect }) {
   const imageUrl = pokemon?.sprites?.other?.["official-artwork"]?.front_default;
+  const navigate = useNavigate();
 
   return (
-    <div onClick={() => onSelect(pokemon)} className="bg-white rounded shadow-md p-4 hover:shadow-lg transition cursor-pointer flex flex-col items-center">
+    <div onClick={() => navigate(`/pokemon/${pokemon.name}`)} className="bg-white rounded shadow-md p-4 hover:shadow-lg transition cursor-pointer flex flex-col items-center">
       {imageUrl && <img className="border-3 p-2 rounded border-purple-400" src={imageUrl} alt={pokemon.name} />}
       <h2 className=" font-bold text-center capitalize">{pokemon.name}</h2>
       <div className="flex items-center justify-center gap-2 mt-2">

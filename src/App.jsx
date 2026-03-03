@@ -6,6 +6,7 @@ import ItemsPage from "./pages/ItemsPage";
 import TypesPage from "./pages/TypesPage";
 import Header from "./components/layouts/Header";
 import Footer from "./components/layouts/Footer";
+import PokemonDetailsPage from "./pages/PokemonDetailsPage";
 
 function App() {
   return (
@@ -17,10 +18,11 @@ function App() {
       <div className="flex flex-1 overflow-hidden min-h-0">
         <Sidebar />
         <Routes>
-          <Route path="/" element={<PokemonPage />} />
+          <Route path="/" element={<PokemonPage  />} />
           <Route path="/moves" element={<MovesPage />} />
           <Route path="/items" element={<ItemsPage />} />
           <Route path="/types" element={<TypesPage />} />
+          <Route path="/pokemon/:name" element={<PokemonDetailsPage />} />
         </Routes>
       </div>
       

@@ -22,7 +22,7 @@ A web app to explore Pokemon details using PokeAPI.
 
 ```bash
 npm install
-npm run 
+npm run dev
 ```
 
 ## My Design
