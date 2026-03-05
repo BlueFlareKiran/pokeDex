@@ -1,39 +1,48 @@
-// components/Pokemon/PokemonDetails/PokemonDetails.jsx
-
 import PokemonProfileCard from "./PokemonProfileCard";
 import PokemonStats from "./PokemonStats";
 import PokemonEvolutionLine from "./PokemonEvolutionLine";
 import PokemonMovesList from "./PokemonMovesList";
 import PokemonTypeDefenses from "./PokemonTypeDefenses";
 import PokemonForms from "./PokemonForms";
+import PokemonAbilities from "./PokemonAbilities";
 
-export default function PokemonDetails({ pokemonDetails }) {
-
+export default function PokemonDetails({ pokemonDetails, varieties }) {
   if (!pokemonDetails) {
     return <div>Select a Pokemon</div>;
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6 border border-gray-700 rounded">
+    <div className="flex flex-col gap-6">
+      {/* LEFT COLUMN: Image + types + abilities */}
+      <div className="flex gap-10 items-center">
+      <div className="flex w-100">
+        <PokemonProfileCard
+          pokemonDetails={pokemonDetails}
+          varieties={varieties}
+        />
+      </div>
+      <div className="flex-1">
+        <PokemonAbilities pokemonDetails={pokemonDetails} varieties={varieties} />
+      </div>
+      </div>
 
-      {/* Profile Section */}
-      <PokemonProfileCard pokemonDetails={pokemonDetails} />
+      <div className="flex items-center gap-9">
+        {/* RIGHT COLUMN: Stats */}
+        <div className="flex-1">
+          <PokemonStats pokemonDetails={pokemonDetails} />
+        </div>
 
-      {/* Stats Section */}
-      <PokemonStats pokemonDetails={pokemonDetails} />
+        {/* ROW 2: Type Defenses full width */}
+        <div className="flex-1">
+          <PokemonTypeDefenses pokemonDetails={pokemonDetails} />
+        </div>
+      </div>
 
-      {/* Evolution Section */}
+      {/* ROW 3: Evolution Line full width */}
       <PokemonEvolutionLine pokemonDetails={pokemonDetails} />
 
-      {/* Type Defenses */}
-      <PokemonTypeDefenses pokemonDetails={pokemonDetails} />
-
-      {/* Forms */}
-      <PokemonForms pokemonDetails={pokemonDetails} /> 
-
-      {/* Moves */}
+      {/* ROW 4: Moves side by side */}
       <PokemonMovesList pokemonDetails={pokemonDetails} />
-
     </div>
   );
 }

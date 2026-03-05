@@ -1,7 +1,7 @@
 import { SquarePlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function PokemonCard({ pokemon,onSelect }) {
+export default function PokemonCard({ pokemon}) {
   const imageUrl = pokemon?.sprites?.other?.["official-artwork"]?.front_default;
   const navigate = useNavigate();
 

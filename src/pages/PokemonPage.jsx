@@ -71,11 +71,8 @@ export default function PokemonPage() {
 
   useEffect(() => {
     setVisibleCount(20);
-  }, [selectedGeneration]);
+  }, [selectedGeneration,selectedType]);
 
-  useEffect(() => {
-    setVisibleCount(20);
-  }, [selectedType]);
 
   useEffect(() => {
     async function fetchPokemon() {
