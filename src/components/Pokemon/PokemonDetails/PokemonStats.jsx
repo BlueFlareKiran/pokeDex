@@ -17,15 +17,17 @@ export default function PokemonStats({ pokemonDetails }) {
   // make the stat names more readable
   function formatStatName(name) {
     const names = {
-      "hp": "HP",
-      "attack": "Attack",
-      "defense": "Defense",
+      hp: "HP",
+      attack: "Attack",
+      defense: "Defense",
       "special-attack": "Sp. Atk",
       "special-defense": "Sp. Def",
-      "speed": "Speed",
+      speed: "Speed",
     };
     return names[name] || name;
   }
+
+  const totalStats = stats.reduce((sum, s) => sum + s.base_stat, 0);
 
   return (
     <div className="flex flex-col gap-3">
@@ -33,7 +35,6 @@ export default function PokemonStats({ pokemonDetails }) {
 
       {stats.map((s) => (
         <div key={s.stat.name} className="flex items-center gap-3">
-
           {/* Stat name - fixed width so bars all line up */}
           <span className="text-sm text-gray-500 w-20 shrink-0">
             {formatStatName(s.stat.name)}
@@ -52,10 +53,17 @@ export default function PokemonStats({ pokemonDetails }) {
               style={{ width: `${(s.base_stat / MAX_STAT) * 100}%` }}
             />
           </div>
-
+          
         </div>
+        
       ))}
-
+      {/* Total row */}
+          <div className="flex items-center gap-3 border-t pt-3 mt-1">
+            <span className="text-sm text-gray-500 w-20 shrink-0">Total</span>
+            <span className="text-sm font-bold w-8 text-right shrink-0">
+              {totalStats}
+            </span>
+          </div>
     </div>
   );
 }

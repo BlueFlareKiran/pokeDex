@@ -8,6 +8,7 @@ export default function PokemonDetailsPage() {
   const [pokemonData, setPokemonData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [varieties, setVarieties] = useState([]);
+  const [abilities, setAbilities] = useState([]);
 
   useEffect(() => {
     async function fetchPokemon() {
@@ -19,6 +20,27 @@ export default function PokemonDetailsPage() {
 
         const speciesRes = await fetch(data.species.url);
         const speciesData = await speciesRes.json();
+
+        // fetch all abilities at the same time using Promise.all
+        const abilitiesData = await Promise.all(
+          data.abilities.map(async (a) => {
+            const res = await fetch(a.ability.url);
+            const abilityData = await res.json();
+
+            // find the english description
+            const englishEntry = abilityData.effect_entries.find(
+              (e) => e.language.name === "en",
+            );
+
+            return {
+              name: a.ability.name,
+              is_hidden: a.is_hidden,
+              description: englishEntry?.effect ?? "No description available",
+            };
+          }),
+        );
+
+        setAbilities(abilitiesData);
 
         setVarieties(speciesData.varieties);
 
@@ -51,7 +73,7 @@ export default function PokemonDetailsPage() {
             ))}
           </div>
         )} */}
-        <PokemonDetails pokemonDetails={pokemonData} varieties={varieties} />
+        <PokemonDetails pokemonDetails={pokemonData} abilities={abilities} varieties={varieties} />
       </div>
     </div>
   );
